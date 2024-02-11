@@ -5,7 +5,6 @@ services:
     image: minio/minio
     volumes:
       - minio_data:/data
-      - ./newuser.sh:/usr/bin/newuser.sh
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -13,8 +12,12 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD-SHELL", "mc alias set myminio http://localhost:9000 minioadmin minioadmin && mc admin info myminio"]
       interval: 30s
       timeout: 20s
       retries: 3

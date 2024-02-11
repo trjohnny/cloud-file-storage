@@ -1,8 +1,22 @@
 #!/bin/sh
 
+# Function to show help message
+show_help() {
+    echo "Usage: $0 <username>"
+    echo "Options:"
+    echo "  --help          Display this help message and exit"
+    echo "Creates a new user in MinIO with a random password and a bucket with a 10GB quota."
+}
+
+# Check for help argument
+if [ "$1" = "--help" ]; then
+    show_help
+    exit 0
+fi
+
 # Check for username argument
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <username>"
+    show_help
     exit 1
 fi
 
@@ -12,7 +26,7 @@ USERNAME=$1
 # Generate a random password
 PASSWORD=$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 12)
 
-# Set the alias for the MinIO server (adjust endpoint and access keys as needed)
+# Set the alias for the MinIO server
 mc alias set myminio http://localhost:9000 minioadmin minioadmin
 
 # Create the user with the generated password
@@ -20,6 +34,9 @@ mc admin user add myminio "$USERNAME" "$PASSWORD"
 
 # Create a bucket for the user
 mc mb myminio/"${USERNAME}-bucket"
+
+# Set bucket quota to 1GB
+mc quota set --size 1GiB myminio/"${USERNAME}-bucket"
 
 # Create a policy file for the user
 POLICY_NAME="${USERNAME}Policy"
@@ -56,10 +73,10 @@ cat <<EOT > "$POLICY_JSON"
 EOT
 
 # Add the policy to MinIO
-mc admin policy add myminio "$POLICY_NAME" "$POLICY_JSON"
+mc admin policy create myminio "$POLICY_NAME" "$POLICY_JSON"
 
 # Link the policy to the user
-mc admin policy set myminio "$POLICY_NAME" user="$USERNAME"
+mc admin policy attach myminio "$POLICY_NAME" --user "$USERNAME"
 
 # Clean up the policy JSON file
 rm "$POLICY_JSON"
@@ -68,4 +85,3 @@ rm "$POLICY_JSON"
 echo "User created successfully!"
 echo "Username: $USERNAME"
 echo "Password: $PASSWORD"
-
