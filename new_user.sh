@@ -2,7 +2,10 @@
 
 # Function to show help message
 show_help() {
-    echo "Usage: $0 <username>"
+    echo "Usage: $0 <minio-endpoint> <username>"
+    echo "Example:"
+    echo "  $0 http://localhost:9000 foo_user"
+    echo "  $0 https://easyminiostorage.corp.company.it:9000 bar_user"
     echo "Options:"
     echo "  --help          Display this help message and exit"
     echo "Creates a new user in MinIO with a random password and a bucket with a 10GB quota."
@@ -14,20 +17,21 @@ if [ "$1" = "--help" ]; then
     exit 0
 fi
 
-# Check for username argument
-if [ "$#" -ne 1 ]; then
+# Check for correct number of arguments
+if [ "$#" -ne 2 ]; then
     show_help
     exit 1
 fi
 
-# Assign username from the first argument
-USERNAME=$1
+# Assign endpoint and username from the arguments
+ENDPOINT=$1
+USERNAME=$2
 
 # Generate a random password
 PASSWORD=$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 12)
 
 # Set the alias for the MinIO server
-mc alias set myminio http://localhost:9000 minioadmin minioadmin
+mc alias set myminio $ENDPOINT minioadmin minioadmin
 
 # Create the user with the generated password
 mc admin user add myminio "$USERNAME" "$PASSWORD"
@@ -35,8 +39,8 @@ mc admin user add myminio "$USERNAME" "$PASSWORD"
 # Create a bucket for the user
 mc mb myminio/"${USERNAME}-bucket"
 
-# Set bucket quota to 1GB
-mc quota set --size 1GiB myminio/"${USERNAME}-bucket"
+# Set bucket quota to 5GB
+mc quota set --size 5GiB myminio/"${USERNAME}-bucket"
 
 # Create a policy file for the user
 POLICY_NAME="${USERNAME}Policy"
