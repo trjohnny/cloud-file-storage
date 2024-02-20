@@ -22,24 +22,24 @@ Adjust the CPU and memory allocations based on your system's capabilities and th
 
 1. **Add the MinIO Helm repository:**
 
-```shell
-helm repo add minio https://helm.min.io/
-```
+    ```shell
+    helm repo add minio https://helm.min.io/
+    ```
 
 2. **Update your local Helm chart repository cache:**
 
-```shell
-helm repo update
-```
+    ```shell
+    helm repo update
+    ```
 
 3. **Install the MinIO Operator:**
 
-```shell
-helm install \
-  --namespace minio-operator \
-  --create-namespace \
-  operator minio-operator/operator
-```
+    ```shell
+    helm install \
+      --namespace minio-operator \
+      --create-namespace \
+      operator minio-operator/operator
+    ```
 
 ## Step 3: Prepare TLS Secret
 
@@ -67,12 +67,12 @@ kubectl apply -f minio-tls-secret.yaml
 
 2. **Install the Tenant using Helm, specifying your custom values:**
 
-```shell
-helm install \
-  --namespace minio \
-  minio-tenant minio-operator/tenant \
-  -f values.yaml
-```
+    ```shell
+    helm install \
+      --namespace minio \
+      minio-tenant minio-operator/tenant \
+      -f values.yaml
+    ```
 
 Ensure your `values.yaml` includes references to the `minio-tls-secret` for TLS configuration.
 
@@ -82,11 +82,15 @@ To access the MinIO Console after deployment, a couple of additional steps are r
 
 1. **Modify your `/etc/hosts` file:** Add an entry for `127.0.0.1 easyminiostorage.corp.company.it` to your `/etc/hosts` file. This step is necessary to route the domain name to your local Minikube environment.
 
-```plaintext
-127.0.0.1 easyminiostorage.corp.company.it
-```
+    ```plaintext
+    127.0.0.1 easyminiostorage.corp.company.it
+    ```
 
-2. **Use `minikube tunnel`:** Run `minikube tunnel` in a separate terminal window to expose the MinIO service externally. This command requires administrative privileges and will ask for your password.
+2. **Enable ingress addon:** Enable the `ingress` addon on minikube running:
+    ```shell
+    minikube addons enable ingress
+    ```
+3. **Use `minikube tunnel`:** Run `minikube tunnel` in a separate terminal window to expose the MinIO service externally. This command requires administrative privileges and will ask for your password.
 
 After setting up the `/etc/hosts` file and starting `minikube tunnel`, you can access the MinIO Console by navigating to `https://easyminiostorage.corp.company.it` in your web browser. Ensure your browser trusts the CA certificate used by the MinIO service to avoid security warnings.
 
@@ -142,7 +146,7 @@ Navigate to `http://localhost:9090` to access the Prometheus web UI.
 1. **Port-forward Grafana:**
 
 ```shell
-kubectl port-forward service/prometheus-operator-grafana 3000:80 --namespace monitoring
+kubectl port-forward service/prometheus-operator-grafana 3000:80
 ```
 
 2. **Open Grafana in your browser:**
