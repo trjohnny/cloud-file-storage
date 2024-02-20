@@ -74,6 +74,8 @@ To use certgen, follow these steps:
    ```
    Replace the host with the desired domain. The command will create two files: private.key and public.crt.
 
+   (Advanced) If you want to use custom-CA signed certificates, navigate into the `./company-CA` folder and use the private.key and public.crt file inside.
+
 2. Place these files in the MinIO server's configuration directory under `~/.minio/certs/`. For Docker deployments, this would typically involve mounting the directory containing the certificates to the container (folder `./certs`).
 
 3. Configure MinIO to use HTTPS by setting the `MINIO_SERVER_URL` environment variable to the desired URL (e.g. https://easyminiostorage.corp.company.it).
@@ -89,6 +91,6 @@ To use certgen, follow these steps:
          ...
    ```
 
-5. Restart the MinIO service to apply the changes.
+5. Restart the MinIO service to apply the changes. (Advanced) If using CA-signed certificates, install the `company-CA.crt` certificate placing it into the system keychain.
 
 You can find at the following link the complete documentation on the usage of MinIO over HTTPS: https://min.io/docs/minio/linux/operations/network-encryption.html
