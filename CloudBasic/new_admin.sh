@@ -4,7 +4,7 @@
 show_help() {
     echo "Usage: $0 <minio-endpoint> <username>"
     echo "Example:"
-    echo "  $0 http://localhost:9000 foo_admin"
+    echo "  $0 https://localhost:9000 foo_admin"
     echo "  $0 https://easyminiostorage.corp.company.it:9000 bar_admin"
     echo "Options:"
     echo "  --help          Display this help message and exit"
@@ -31,10 +31,10 @@ USERNAME=$2
 PASSWORD=$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 12)
 
 # Set the alias for the MinIO server
-mc alias set myminio $ENDPOINT minioadmin minioadmin
+mc --insecure alias set myminio $ENDPOINT minioadmin minioadmin
 
 # Create the admin user with the generated password
-mc admin user add myminio "$USERNAME" "$PASSWORD"
+mc --insecure admin user add myminio "$USERNAME" "$PASSWORD"
 
 # Create a policy file for the admin user
 ADMIN_POLICY_NAME="${USERNAME}AdminPolicy"
@@ -46,12 +46,11 @@ cat <<EOT > "$ADMIN_POLICY_JSON"
     "Statement": [
         {
             "Action": [
-                "admin:*",
-                "s3:*"
+                "admin:*"
             ],
             "Effect": "Allow",
             "Resource": [
-                "*"
+                "arn:aws:s3:::*"
             ],
             "Sid": ""
         }
@@ -60,10 +59,10 @@ cat <<EOT > "$ADMIN_POLICY_JSON"
 EOT
 
 # Add the policy to MinIO
-mc admin policy create myminio "$ADMIN_POLICY_NAME" "$ADMIN_POLICY_JSON"
+mc --insecure admin policy create myminio "$ADMIN_POLICY_NAME" "$ADMIN_POLICY_JSON"
 
 # Link the policy to the user
-mc admin policy attach myminio "$ADMIN_POLICY_NAME" --user "$USERNAME"
+mc --insecure admin policy attach myminio "$ADMIN_POLICY_NAME" --user "$USERNAME"
 
 # Clean up the policy JSON file
 rm "$ADMIN_POLICY_JSON"

@@ -15,7 +15,7 @@ services:
       
   minio:
     image: minio/minio
-    mem_limit: 1024M
+    mem_limit: 512M
     cpus: "1"
     volumes:
       - minio_data:/data
@@ -25,7 +25,6 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
-      MINIO_SERVER_URL: "https://easyminiostorage.corp.company.it"
       MINIO_PROMETHEUS_AUTH_TYPE: public
     command: server --console-address ":443" /data --certs-dir /data/certs
     user: "1000:1000"
