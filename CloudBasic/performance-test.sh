@@ -4,8 +4,8 @@
 function show_help {
     echo "Usage: $0 <minio-endpoint> [file-size-in-MB]"
     echo "Example:"
-    echo "  $0 http://localhost:9000 20"
-    echo "  $0 http://localhost:9000     # Defaults to 10MB"
+    echo "  $0 ./performance-test.sh https://easyminiostorage.corp.company.it:9000 100"
+    echo "  $0 ./performance-test.sh https://localhost:9000 200"
     echo "Arguments:"
     echo "  minio-endpoint   The endpoint URL for the MinIO server"
     echo "  file-size-in-MB  (Optional) Size of the test file to create and upload in megabytes. Defaults to 10MB."
@@ -27,12 +27,12 @@ BUCKET="test-bucket"
 FILE="test-file"
 
 # Set alias for MinIO server
-mc alias set ${MINIO_ALIAS} ${MINIO_ENDPOINT} ${ACCESS_KEY} ${SECRET_KEY}
+mc -insecure alias set ${MINIO_ALIAS} ${MINIO_ENDPOINT} ${ACCESS_KEY} ${SECRET_KEY}
 
 # Check if the bucket exists, if not, create it
-if ! mc ls ${MINIO_ALIAS}/${BUCKET} &>/dev/null; then
+if ! mc --insecure ls ${MINIO_ALIAS}/${BUCKET} &>/dev/null; then
     echo "Creating bucket '${BUCKET}'..."
-    mc mb ${MINIO_ALIAS}/${BUCKET}
+    mc --insecure mb ${MINIO_ALIAS}/${BUCKET}
 fi
 
 # Create a test file of specified size
@@ -41,15 +41,15 @@ dd if=/dev/zero of=${FILE} bs=1M count=${FILE_SIZE_MB} status=none
 
 # Upload the file
 echo "Uploading the file..."
-time mc cp ${FILE} ${MINIO_ALIAS}/${BUCKET}/
+time mc --insecure cp ${FILE} ${MINIO_ALIAS}/${BUCKET}/
 
 # Download the file
 echo "Downloading the file..."
-time mc cp ${MINIO_ALIAS}/${BUCKET}/${FILE} ${FILE}.downloaded
+time mc --insecure cp ${MINIO_ALIAS}/${BUCKET}/${FILE} ${FILE}.downloaded
 
 # Cleanup
 echo "Cleaning up..."
 rm ${FILE} ${FILE}.downloaded
-mc rm ${MINIO_ALIAS}/${BUCKET}/${FILE}
+mc --insecure rm ${MINIO_ALIAS}/${BUCKET}/${FILE}
 
 echo "Performance test completed."

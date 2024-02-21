@@ -17,7 +17,7 @@
 #
 secrets:
   name: myminio-env-configuration
-  accessKey: minio 
+  accessKey: minio
   secretKey: minio123
   ###
   # The name of an existing Kubernetes secret to import to the MinIO Tenant
@@ -294,7 +294,7 @@ tenant:
   #
   # Both fields default to ``false``.
   exposeServices:
-    minio: true
+    minio: false
     console: false
   ###
   # The `Kubernetes Service Account <https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/>`__ associated with the Tenant.
@@ -446,12 +446,12 @@ tenant:
 # Set the keys to conform to the Ingress controller and configuration of your choice.
 ingress:
   api:
-    enabled: false
+    enabled: true
     ingressClassName: ""
     labels: { }
     annotations: { }
     tls: [ ]
-    host: minio.local
+    host: api.easyminiostorage.corp.company.it
     path: /
     pathType: Prefix
   console:
