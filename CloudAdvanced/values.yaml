@@ -109,7 +109,7 @@ tenant:
       # If using Amazon Elastic Block Store (EBS) CSI driver
       # Please make sure to set xfs for "csi.storage.k8s.io/fstype" parameter under StorageClass.parameters.
       # Docs: https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/master/docs/parameters.md
-      # storageClassName: standard
+      storageClassName: standard
       ###
       # Specify `storageAnnotations <https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/>`__ to associate to PVCs.
       storageAnnotations: { }
@@ -447,9 +447,10 @@ tenant:
 ingress:
   api:
     enabled: true
-    ingressClassName: ""
+    ingressClassName: nginx
     labels: { }
-    annotations: { }
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
     tls: [ ]
     host: api.easyminiostorage.corp.company.it
     path: /
@@ -457,7 +458,8 @@ ingress:
   console:
     enabled: true
     ingressClassName: nginx
-    annotations: { }
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
     tls:
       - hosts:
           - easyminiostorage.corp.company.it

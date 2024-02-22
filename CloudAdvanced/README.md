@@ -63,7 +63,7 @@ kubectl apply -f minio-tls-secret.yaml
 
 ## Step 6: Install MinIO Tenant
 
-1. **Prepare your custom `values.yaml` file for the Tenant deployment.** This file should specify configurations such as resource allocations, persistence settings, and the TLS secret reference.
+1. **(Optional) Adjust your custom `values.yaml` file for the Tenant deployment.** This file specifies configurations such as resource allocations, persistence settings, and the TLS secret reference.
 
 2. **Install the Tenant using Helm, specifying your custom values:**
 
@@ -74,7 +74,6 @@ kubectl apply -f minio-tls-secret.yaml
       -f values.yaml
     ```
 
-Ensure your `values.yaml` includes references to the `minio-tls-secret` for TLS configuration.
 
 ## Accessing MinIO
 
@@ -90,7 +89,7 @@ To access the MinIO Console after deployment, a couple of additional steps are r
     ```shell
     minikube addons enable ingress
     ```
-3. **Use `minikube tunnel`:** Run `minikube tunnel` in a separate terminal window to expose the MinIO service externally. This command requires administrative privileges and will ask for your password.
+3. **Use `minikube tunnel`:** Upon verifying that all the pods are in the READY state, run `minikube tunnel` in a separate terminal window to expose the MinIO service externally. This command requires administrative privileges and will ask for your password.
 
 After setting up the `/etc/hosts` file and starting `minikube tunnel`, you can access the MinIO Console by navigating to `https://easyminiostorage.corp.company.it` in your web browser. Ensure your browser trusts the CA certificate used by the MinIO service to avoid security warnings.
 
@@ -113,29 +112,29 @@ After deploying MinIO, you can monitor your cluster using Prometheus. Here are t
 
 1. **Add the Prometheus community Helm repository:**
 
-```shell
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-```
+   ```shell
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   ```
 
 2. **Update your local Helm chart repository cache:**
 
-```shell
-helm repo update
-```
+   ```shell
+   helm repo update
+   ```
 
 3. **Install the Prometheus Operator:**
 
-```shell
-helm install prometheus-operator prometheus-community/kube-prometheus-stack
-```
+   ```shell
+   helm install prometheus-operator prometheus-community/kube-prometheus-stack
+   ```
 
 ### Accessing Prometheus
 
 1. **Port-forward Prometheus:**
 
-```shell
-kubectl port-forward service/prometheus-operated 9090:9090
-```
+   ```shell
+   kubectl port-forward service/prometheus-operated 9090:9090
+   ```
 
 2. **Open Prometheus in your browser:**
 
@@ -145,9 +144,9 @@ Navigate to `http://localhost:9090` to access the Prometheus web UI.
 
 1. **Port-forward Grafana:**
 
-```shell
-kubectl port-forward service/prometheus-operator-grafana 3000:80
-```
+   ```shell
+   kubectl port-forward service/prometheus-operator-grafana 3000:80
+   ```
 
 2. **Open Grafana in your browser:**
 
