@@ -81,10 +81,6 @@ To access the MinIO Console after deployment, a couple of additional steps are r
 
 1. **Modify your `/etc/hosts` file:** Add an entry for `127.0.0.1 easyminiostorage.corp.company.it` to your `/etc/hosts` file. This step is necessary to route the domain name to your local Minikube environment.
 
-    ```plaintext
-    127.0.0.1 easyminiostorage.corp.company.it
-    ```
-
 2. **Enable ingress addon:** Enable the `ingress` addon on minikube running:
     ```shell
     minikube addons enable ingress
